@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, PhotoImage
 import subprocess
 import os
 from utils.convertir_datos import convertir_mpl_a_dzn
@@ -39,15 +39,58 @@ def mostrar_resultado(resultado):
 
 # Configuración de la interfaz
 root = tk.Tk()
-root.title("Interfaz MiniZinc")
+root.title("Interfaz MinPol - Optimización")
 
-btn_cargar = tk.Button(root, text="Cargar archivo .mpl", command=cargar_archivo)
-btn_cargar.pack()
+# Definir el tamaño de la ventana (ancho x alto)
+window_width = 700
+window_height = 520
 
-btn_ejecutar = tk.Button(root, text="Ejecutar Modelo", command=ejecutar_modelo)
-btn_ejecutar.pack()
+# Obtener el tamaño de la pantalla
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
 
-resultado_texto = tk.Text(root, height=10, width=50)
-resultado_texto.pack()
+# Calcular las coordenadas para centrar la ventana
+position_x = int((screen_width - window_width) / 2)
+position_y = int((screen_height - window_height) / 2)
+
+# Establecer la geometría de la ventana y su posición
+root.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
+root.configure(bg="#fefae0")
+
+# Etiqueta para el título en la parte superior
+label_titulo = tk.Label(root, text="OPTIMIZACIÓN DE POLARIZACIÓN", font=("Georgia", 20), bg="#fefae0", fg="#003049")
+label_titulo.pack(pady=10)
+
+# Cargar y redimensionar la imagen
+ruta_imagen = "Imagenes/polarizacion.png"  
+imagen = PhotoImage(file=ruta_imagen)
+
+# Redimensionar la imagen (en este caso, la escalamos a la mitad de su tamaño original)
+imagen = imagen.subsample(3, 3)  # Ajusta el valor para cambiar el tamaño, cuanto más alto el número, más pequeña la imagen
+
+# Mostrar la imagen debajo del título
+label_imagen = tk.Label(root, image=imagen, bg="#fefae0")
+label_imagen.pack(pady=5)
+
+# Etiquetas y botones con estilo moderno
+
+
+# Crear un Frame para organizar los botones y la flecha
+frame_botones = tk.Frame(root, bg="#fefae0")
+frame_botones.pack(pady=5)
+
+# Botones con estilo moderno
+btn_cargar = tk.Button(frame_botones, text="Cargar archivo .mpl", command=cargar_archivo, bg="#003049", fg="white", font=("Georgia", 12))
+btn_cargar.pack(side="left", padx=10)
+
+# Crear la flecha en el centro
+flecha = tk.Label(frame_botones, text="→", font=("Georgia", 18), bg="#fefae0", fg="#c1121f")
+flecha.pack(side="left", padx=10)
+
+btn_ejecutar = tk.Button(frame_botones, text="Ejecutar Modelo", command=ejecutar_modelo, bg="#003049", fg="white", font=("Georgia", 12))
+btn_ejecutar.pack(side="left", padx=10)
+
+resultado_texto = tk.Text(root, height=10, width=60, font=("Georgia", 10), bg="#f1f8e9", fg="#004d40")
+resultado_texto.pack(pady=10)
 
 root.mainloop()
