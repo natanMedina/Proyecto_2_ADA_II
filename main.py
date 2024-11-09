@@ -21,14 +21,25 @@ def cargar_archivo():
             else:
                 messagebox.showerror("Error", "No se pudo convertir el archivo .mpl.")
 
-# Función para ejecutar el modelo en MiniZinc con el archivo .dzn generado
+# Función para ejecutar el modelo en MiniZinc con el archivo .dzn generado usando la ruta completa al ejecutable
 def ejecutar_modelo():
+    if not os.path.exists(ARCHIVO_MODELO):
+        messagebox.showerror("Error", f"No se encontró el modelo: {ARCHIVO_MODELO}")
+        return
+    if not os.path.exists(ARCHIVO_DZN):
+        messagebox.showerror("Error", f"No se encontró el archivo de datos: {ARCHIVO_DZN}")
+        return
     try:
+        # Ruta completa al ejecutable de MiniZinc
         resultado = subprocess.run(
-            ["minizinc", ARCHIVO_MODELO, ARCHIVO_DZN],
-            capture_output=True, text=True
+            ["C:/Program Files/MiniZinc/minizinc.exe", ARCHIVO_MODELO, ARCHIVO_DZN],
+            capture_output=True, text=True, check=True
         )
         mostrar_resultado(resultado.stdout)
+    except subprocess.CalledProcessError as e:
+        messagebox.showerror("Error", f"Error en la ejecución del modelo: {e.stderr}")
+    except FileNotFoundError:
+        messagebox.showerror("Error", "No se encontró el ejecutable de MiniZinc en la ruta especificada.")
     except Exception as e:
         messagebox.showerror("Error", f"No se pudo ejecutar el modelo: {e}")
 
