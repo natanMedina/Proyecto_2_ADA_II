@@ -5,14 +5,14 @@ import os
 from utils.convertir_datos import convertir_mpl_a_dzn
 
 # Ruta de las carpetas de datos y salidas
-RUTA_DATOS = "Datos/"
 RUTA_SALIDAS = "Salidas/"
-ARCHIVO_DZN = os.path.join(RUTA_DATOS, "DatosProyecto.dzn")
-ARCHIVO_MODELO = "Proyecto.mzn"
+ARCHIVO_DZN = os.path.join(os.getcwd(), "Datos/DatosProyecto.dzn")
+ARCHIVO_MODELO = os.path.join(os.getcwd(), "Proyecto.mzn")
+print (ARCHIVO_DZN)
 
 # Función para cargar el archivo .mpl y convertirlo a .dzn
 def cargar_archivo():
-    file_path = filedialog.askopenfilename(initialdir=RUTA_DATOS, filetypes=[("MPL files", "*.mpl")])
+    file_path = filedialog.askopenfilename(initialdir=os.getcwd(), filetypes=[("MPL files", "*.mpl")])
     if file_path:
         with open(file_path, 'r') as file:
             datos = file.readlines()
@@ -37,7 +37,8 @@ def ejecutar_modelo():
         )
         mostrar_resultado(resultado.stdout)
     except subprocess.CalledProcessError as e:
-        messagebox.showerror("Error", f"Error en la ejecución del modelo: {e.stderr}")
+        print(f"Error en la ejecución del modelo: {e}") 
+        messagebox.showerror("Error", f"Error en la ejecución del modelo: {e}")
     except FileNotFoundError:
         messagebox.showerror("Error", "No se encontró el ejecutable de MiniZinc en la ruta especificada.")
     except Exception as e:
