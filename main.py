@@ -36,11 +36,9 @@ def ejecutar_modelo():
         minizinc_command = f'minizinc --solver gecode --all-solutions Proyecto.mzn "./Datos/DatosProyecto.dzn"'
         resultado = subprocess.run(
                 minizinc_command, shell=True, capture_output=True, text=True)
-        #subprocess.run(
-        #    [minizinc, ARCHIVO_MODELO, ARCHIVO_DZN],
-        #   capture_output=True, text=True, check=True
-        #)
-        mostrar_resultado(resultado.stdout)
+       # Obtener las últimas 10 líneas de la salida estándar
+        ultimas_10_lineas = '\n'.join(resultado.stdout.splitlines()[-12:-1])
+        mostrar_resultado(ultimas_10_lineas )
     except subprocess.CalledProcessError as e:
         print(f"Error en la ejecución del modelo: {e}") 
         messagebox.showerror("Error", f"Error en la ejecución del modelo: {e}")
