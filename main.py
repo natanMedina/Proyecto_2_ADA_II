@@ -3,6 +3,8 @@ from tkinter import filedialog, messagebox, PhotoImage
 import subprocess
 import os
 from utils.convertir_datos import convertir_mpl_a_dzn
+from minizinc import Instance, Model,Solver
+
 
 # Ruta de las carpetas de datos y salidas
 RUTA_SALIDAS = "Salidas/"
@@ -31,10 +33,13 @@ def ejecutar_modelo():
         return
     try:
         # Ruta completa al ejecutable de MiniZinc
+        minizinc_command = f'minizinc --solver gecode --all-solutions Proyecto.mzn "./Datos/DatosProyecto.dzn"'
         resultado = subprocess.run(
-            ["C:/Program Files/MiniZinc/minizinc.exe", ARCHIVO_MODELO, ARCHIVO_DZN],
-            capture_output=True, text=True, check=True
-        )
+                minizinc_command, shell=True, capture_output=True, text=True)
+        #subprocess.run(
+        #    [minizinc, ARCHIVO_MODELO, ARCHIVO_DZN],
+        #   capture_output=True, text=True, check=True
+        #)
         mostrar_resultado(resultado.stdout)
     except subprocess.CalledProcessError as e:
         print(f"Error en la ejecución del modelo: {e}") 
