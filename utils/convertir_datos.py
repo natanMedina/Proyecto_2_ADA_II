@@ -16,17 +16,17 @@ def convertir_mpl_a_dzn(datos_mpl, archivo_dzn):
         with open(archivo_dzn, 'w') as file:
             file.write(f"n = {n};\n")
             file.write(f"m = {m};\n")
-            file.write(f"distribucion = [{distribucion}];\n")
-            file.write(f"valores_opiniones = [{valores_opiniones}];\n")
-            file.write(f"costos_extras = [{costos_extras}];\n")
+            file.write(f"p = [{distribucion}];\n")
+            file.write(f"v = [{valores_opiniones}];\n")
+            file.write(f"ce = [{costos_extras}];\n")
             
             # Escribimos la matriz de costos de desplazamiento
-            file.write("costos_desplazamiento = [| ")
+            file.write("c = [| ")
             file.write(" | ".join(costos_desplazamiento))
             file.write(" |];\n")
             
-            file.write(f"costo_total_maximo = {costo_total_maximo};\n")
-            file.write(f"max_movimientos = {max_movimientos};\n")
+            file.write(f"ct = {costo_total_maximo};\n")
+            file.write(f"maxM = {max_movimientos};\n")
         
         return True  # Indica que la conversión fue exitosa
 

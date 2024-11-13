@@ -3,16 +3,18 @@ from tkinter import filedialog, messagebox, PhotoImage
 import subprocess
 import os
 from utils.convertir_datos import convertir_mpl_a_dzn
+import time
+
 
 # Ruta de las carpetas de datos y salidas
-RUTA_DATOS = "Datos/"
 RUTA_SALIDAS = "Salidas/"
-ARCHIVO_DZN = os.path.join(RUTA_DATOS, "DatosProyecto.dzn")
-ARCHIVO_MODELO = "Proyecto.mzn"
+ARCHIVO_DZN = os.path.join(os.getcwd(), "Datos/DatosProyecto.dzn")
+ARCHIVO_MODELO = os.path.join(os.getcwd(), "Proyecto.mzn")
+print (ARCHIVO_DZN)
 
 # Función para cargar el archivo .mpl y convertirlo a .dzn
 def cargar_archivo():
-    file_path = filedialog.askopenfilename(initialdir=RUTA_DATOS, filetypes=[("MPL files", "*.mpl")])
+    file_path = filedialog.askopenfilename(initialdir=os.getcwd(), filetypes=[("MPL files", "*.mpl")])
     if file_path:
         with open(file_path, 'r') as file:
             datos = file.readlines()
@@ -21,14 +23,34 @@ def cargar_archivo():
             else:
                 messagebox.showerror("Error", "No se pudo convertir el archivo .mpl.")
 
-# Función para ejecutar el modelo en MiniZinc con el archivo .dzn generado
+# Función para ejecutar el modelo en MiniZinc con el archivo .dzn generado usando la ruta completa al ejecutable
 def ejecutar_modelo():
+    if not os.path.exists(ARCHIVO_MODELO):
+        messagebox.showerror("Error", f"No se encontró el modelo: {ARCHIVO_MODELO}")
+        return
+    if not os.path.exists(ARCHIVO_DZN):
+        messagebox.showerror("Error", f"No se encontró el archivo de datos: {ARCHIVO_DZN}")
+        return
     try:
+        # Comando minizinc consola
+        minizinc_command = f'minizinc --solver gecode --all-solutions Proyecto.mzn "./Datos/DatosProyecto.dzn"'
+        #inicio de tiempo
+        start_time = time.time()
         resultado = subprocess.run(
-            ["minizinc", ARCHIVO_MODELO, ARCHIVO_DZN],
-            capture_output=True, text=True
-        )
-        mostrar_resultado(resultado.stdout)
+                minizinc_command, shell=True, capture_output=True, text=True)
+        #termino de tiempo
+        end_time = time.time()
+        execution_time = end_time - start_time
+        tiempoejecucion=f''
+       # Obtener las últimas 11 líneas de la salida estándar
+        ultimas_10_lineas = '\n'.join(resultado.stdout.splitlines()[-12:-1])
+        resultado_final = f'{ultimas_10_lineas}\n\nTiempo de ejecución: {execution_time:.4f} segundos'
+        mostrar_resultado(resultado_final)
+    except subprocess.CalledProcessError as e:
+        print(f"Error en la ejecución del modelo: {e}") 
+        messagebox.showerror("Error", f"Error en la ejecución del modelo: {e}")
+    except FileNotFoundError:
+        messagebox.showerror("Error", "No se encontró el ejecutable de MiniZinc en la ruta especificada.")
     except Exception as e:
         messagebox.showerror("Error", f"No se pudo ejecutar el modelo: {e}")
 
