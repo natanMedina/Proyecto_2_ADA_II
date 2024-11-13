@@ -42,10 +42,15 @@ def ejecutar_modelo():
         end_time = time.time()
         execution_time = end_time - start_time
         tiempoejecucion=f''
-       # Obtener las últimas 11 líneas de la salida estándar
-        ultimas_10_lineas = '\n'.join(resultado.stdout.splitlines()[-12:-1])
-        resultado_final = f'{ultimas_10_lineas}\n\nTiempo de ejecución: {execution_time:.4f} segundos'
+        # Verificar si el modelo es insatisfactible
+        if "UNSATISFIABLE" in resultado.stdout:
+            resultado_final = f"El modelo no tiene una solución factible (insatisfactible).\n\nTiempo de ejecución: {execution_time:.4f} segundos"
+        else:
+            ultimas_10_lineas = '\n'.join(resultado.stdout.splitlines()[-12:-1])
+            resultado_final = f'{ultimas_10_lineas}\n\nTiempo de ejecución: {execution_time:.4f} segundos'
+
         mostrar_resultado(resultado_final)
+
     except subprocess.CalledProcessError as e:
         print(f"Error en la ejecución del modelo: {e}") 
         messagebox.showerror("Error", f"Error en la ejecución del modelo: {e}")
